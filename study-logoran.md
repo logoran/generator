@@ -1,57 +1,62 @@
-# 以express的方式学习koa
+# 以express的方式学习koa、logoran
 
 假定你是一个熟悉express的nodejs工程师
 
 - 熟悉nodejs
 - 熟悉expressjs
-- 想快速学习koa
+- 想快速学习koa、logoran
 
 ## 什么是koa？
 
 koa 是由 Express 原班人马打造的，致力于成为一个更小、更富有表现力、更健壮的 Web 框架。使用 koa 编写 web 应用，通过组合不同的 generator，可以免除重复繁琐的回调函数嵌套，并极大地提升错误处理的效率。koa 不在内核方法中绑定任何中间件，它仅仅提供了一个轻量优雅的函数库，使得编写 Web 应用变得得心应手。
 
-http://koajs.com/
+## logoran和koa有些什么差异？
+
+logoran 相较于 koa 使用了更灵活的中间件，logoran 的中间件是可以被重复调用的，这在某系特殊的场合有更好的适用性，各个中间件可以更为灵活的使用。(logoran-compose 相对于 koa-compose 有更大的灵活性)。
+
+http://logoran.com/
 
 更多中间件，上下文，异常处理等，详见[Koa or Express](https://cnodejs.org/topic/55815f28395a0c1812f18257)
 
 
-## express和koa比较
+## express和koa、logoran比较
 
 https://github.com/koajs/koa/blob/master/docs/koa-vs-express.md
 
 
 
-| Feature           | Koa | Express | Connect |
-|------------------:|-----|---------|---------|
-| Middleware Kernel | ✓   | ✓       | ✓       |
-| Routing           |     | ✓       |         |
-| Templating        |     | ✓       |         |
-| Sending Files     |     | ✓       |         |
-| JSONP             |     | ✓       |         |
+| Feature           | Logoran | Koa | Express | Connect |
+|------------------:|---------|-----|---------|---------|
+| Middleware Kernel | ✓       | ✓   | ✓       | ✓       |
+| Routing           |         |     | ✓       |         |
+| Templating        |         |     | ✓       |         |
+| Sending Files     |         |     | ✓       |         |
+| JSONP             |         |     | ✓       |         |
 
 
-这是一份很久以前的文档，目前来看也是对的，但是koa的生态已经很好了
+这是一份很久以前的文档，目前来看也是对的，但是koa的生态已经很好了，logoran更是可以依赖koa的生态
 
-| Feature           | Koa | Express | Connect |
-|------------------:|-----|---------|---------|
-| Middleware Kernel | ✓   | ✓       | ✓       |
-| Routing           | ✓ koa-router    | ✓       |         |
-| Templating        | ✓ koa-views   | ✓       |         |
-| Sending Files     | ✓ koa-send   | ✓       |         |
-| JSONP             | ✓ koa-safe-jsonp   | ✓       |         |
+| Feature           | Logoran | Koa | Express | Connect |
+|------------------:|---------|-----|---------|---------|
+| Middleware Kernel | ✓       | ✓   | ✓       | ✓       |
+| Routing           | ✓ logoran-router   | ✓ koa-router    | ✓       |         |
+| Templating        | ✓ koa-views   | ✓ koa-views   | ✓       |         |
+| Sending Files     | ✓ koa-send   | ✓ koa-send   | ✓       |         |
+| JSONP             | ✓ koa-safe-jsonp   | ✓ koa-safe-jsonp   | ✓       |         |
 
 
-该有的基本都有了,于是我仿着express-generator写了koa-generator
+该有的基本都有了,于是我仿着express-generator及koa-generator，创建了logoran-generator
 
 技术栈如下
 
-- https://github.com/alexmingoia/koa-router
+- https://github.com/logoran/logoran-compose
+- https://github.com/logoran/logoran-router
 - https://github.com/queckezz/koa-views
 - https://github.com/koajs/static
-- https://github.com/koajs/logger
+- https://github.com/logoran/logger
 - https://github.com/koajs/json
 - https://github.com/koajs/body-parsers
-- cookies已经koa内置了，无需处理
+- cookies已经koa\logoran内置了，无需处理
 
 
 ## 生成器
@@ -84,27 +89,27 @@ express-generator提供的功能
 ## 用法
 
 ```
-npm install -g koa-generator
+npm install -g logoran-generator
 ```
 
-然后使用koa命令创建项目
+然后使用logoran\koa命令创建项目
 
 当前目录创建，如果非空需要加force选项
 
 ```
-koa
+logoran
 ```
 
 创建项目目录
 
 ```
-koa helloworld
+logoran helloworld
 ```
 
 实例
 
 ```
-➜  koatest  koa helloworld
+➜  logorantest  logoran helloworld
 
    create : helloworld
    create : helloworld/package.json
@@ -134,7 +139,7 @@ koa helloworld
 ![](docs/1.png)
 
 ```
-➜  koatest  cd helloworld 
+➜  logorantest  cd helloworld 
 ➜  helloworld  npm install
 ➜  helloworld  npm start
 ```
@@ -146,10 +151,10 @@ koa helloworld
 
 ## 路由写法说明
 
-只要是koa-router写的路由都可以加载的，加载方式和express里一样
+只要是logoran-router写的路由都可以加载的，加载方式和express里一样
 
 ```
-var router = require('koa-router')();
+var router = require('logoran-router')();
 
 router.get('/', function *(next) {
   this.body = 'this /1!';
@@ -179,36 +184,27 @@ router.get('/2', function *(next) {
 });
 ```
 
-这个是koa-router的一个问题，和express里的路由稍有不一样，注意一些即可
+这个是logoran-router的一个问题，和express里的路由稍有不一样，注意一些即可
 
-## koa-generator
+## logoran-generator
 
-项目地址 https://github.com/base-n/koa-generator/
+项目地址 https://github.com/logoran/generator/
 
 分支
   - master是生成器，里面的templates目录放模板
-  - tpl是项目模板
 
 欢迎fork、star或issue，O(∩_∩)O谢谢
 
 ## 总结
 
-打通了express-generator和koa-generator玄关后，剩下的就是习惯koa的语法，整个世界就更简单了
+打通了express-generator和logoran-generator玄关后，剩下的就是习惯logoran的语法，整个世界就更简单了
 
 另外项目骨架的好处是约定技术栈，你可以在上面基础上做更多更有意思的事儿
 
-- [自动挂载路由目录](https://github.com/moajs/mount-koa-routes)
-- [koa.res.api返回jsonapi](https://github.com/moajs/koa.res.api)
 - [Mount other Koa applications or middleware to a given pathname](https://github.com/koajs/mount)
-- [Middleware composition utility](https://github.com/koajs/compose)
+- [Middleware composition utility](https://github.com/logoran/compose)
 - [The ultimate generator based flow-control goodness for nodejs (supports thunks, promises, etc)](https://github.com/tj/co)
 - [rest api](https://github.com/zedgu/surface)
 
 
-提前报个料moajs很快会放出一个基于koa的版本来
-
 全文完
-
-欢迎关注我的公众号【node全栈】
-
-![node全栈.png](//dn-cnode.qbox.me/FtALxsauUkYDGdzcuA5y6BaIdUMC)
