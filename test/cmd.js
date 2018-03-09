@@ -9,10 +9,10 @@ var request = require('supertest');
 var rimraf = require('rimraf');
 var spawn = require('child_process').spawn;
 
-var binPath = path.resolve(__dirname, '../bin/koa');
+var binPath = path.resolve(__dirname, '../bin/logoran');
 var tempDir = path.resolve(__dirname, '../temp');
 
-describe('koa(1)', function () {
+describe('logoran', function () {
   mocha.before(function (done) {
     this.timeout(30000);
     cleanup(done);
@@ -42,6 +42,7 @@ describe('koa(1)', function () {
     });
 
     it('should create basic app', function (done) {
+      this.timeout(30000);
       run(dir, [], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
@@ -62,9 +63,9 @@ describe('koa(1)', function () {
     });
 
     it('should have jade templates', function () {
-      assert.notEqual(files.indexOf('views/error.jade'), -1);
-      assert.notEqual(files.indexOf('views/index.jade'), -1);
-      assert.notEqual(files.indexOf('views/layout.jade'), -1);
+      assert.notEqual(files.indexOf('views/error.pug'), -1);
+      assert.notEqual(files.indexOf('views/index.pug'), -1);
+      assert.notEqual(files.indexOf('views/layout.pug'), -1);
     });
 
     it('should have a package.json file', function () {
@@ -75,52 +76,62 @@ describe('koa(1)', function () {
         + '  "version": "0.1.0",\n'
         + '  "private": true,\n'
         + '  "scripts": {\n'
-        + '    "start": "node ./bin/www"\n'
+        + '    "start": "node ./bin/www",\n'
+        + '    "dev": "./node_modules/.bin/nodemon bin/www",\n'
+        + '    "prd": "pm2 start bin/www",\n'
+        + '    "test": "echo \\"Error: no test specified\\" && exit 1"\n'
         + '  },\n'
         + '  "dependencies": {\n'
-        + '    "co": "^4.6.0",\n'
-        + '    "debug": "^2.2.0",\n'
-        + '    "jade": "~1.11.0",\n'
-        + '    "koa": "^1.1.2",\n'
-        + '    "koa-bodyparser": "^2.0.1",\n'
-        + '    "koa-json": "^1.1.1",\n'
-        + '    "koa-logger": "^1.3.0",\n'
+        + '    "debug": "^2.6.3",\n'
+        + '    "koa": "^2.2.0",\n'
+        + '    "koa-bodyparser": "^3.2.0",\n'
+        + '    "koa-convert": "^1.2.0",\n'
+        + '    "koa-json": "^2.0.2",\n'
+        + '    "koa-logger": "^2.0.1",\n'
         + '    "koa-onerror": "^1.2.1",\n'
-        + '    "koa-router": "^5.3.0",\n'
-        + '    "koa-static": "^1.5.2",\n'
-        + '    "koa-views": "^3.1.0"\n'
+        + '    "koa-router": "^7.1.1",\n'
+        + '    "koa-static": "^3.0.0",\n'
+        + '    "koa-views": "^5.2.1",\n'
+        + '    "pug": "^2.0.0-rc.1"\n'
+        + '  },\n'
+        + '  "devDependencies": {\n'
+        + '    "nodemon": "^1.8.1"\n'
         + '  }\n'
         + '}');
     });
 
     it('should have installable dependencies', function (done) {
-      this.timeout(30000);
-      npmInstall(dir, done);
+      this.timeout(600000);
+      yarnInstall(dir, done);
     });
 
-    it('should export an express app from app.js', function () {
+    it('should export an logoran app from app.js', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
-      assert.equal(typeof app, 'function');
-      assert.equal(typeof app.handle, 'function');
+      assert.equal(typeof app, 'object');
+      assert.equal(typeof app.callback, 'function');
+      done();
     });
 
     it('should respond to HTTP request', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/')
-      .expect(200, /<title>Express<\/title>/, done);
+      .expect(200, /<title>Hello Logoran!<\/title>/, done);
     });
 
     it('should generate a 404', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/does_not_exist')
-      .expect(404, /<h1>Not Found<\/h1>/, done);
+      .expect(404, /Not Found/, done);
     });
   });
 
@@ -142,6 +153,7 @@ describe('koa(1)', function () {
     });
 
     it('should create basic app with ejs templates', function (done) {
+      this.timeout(30000);
       run(dir, ['--ejs'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
@@ -162,33 +174,37 @@ describe('koa(1)', function () {
     });
 
     it('should have installable dependencies', function (done) {
-      this.timeout(30000);
-      npmInstall(dir, done);
+      this.timeout(600000);
+      yarnInstall(dir, done);
     });
 
-    it('should export an express app from app.js', function () {
+    it('should export an logoran app from app.js', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
-      assert.equal(typeof app, 'function');
-      assert.equal(typeof app.handle, 'function');
+      assert.equal(typeof app, 'object');
+      assert.equal(typeof app.callback, 'function');
+      done();
     });
 
     it('should respond to HTTP request', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/')
-      .expect(200, /<title>Express<\/title>/, done);
+      .expect(200, /<title>Hello Logoran!<\/title>/, done);
     });
 
     it('should generate a 404', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/does_not_exist')
-      .expect(404, /<h1>Not Found<\/h1>/, done);
+      .expect(404, /Not Found/, done);
     });
   });
 
@@ -210,6 +226,7 @@ describe('koa(1)', function () {
     });
 
     it('should create basic app with git files', function (done) {
+      this.timeout(30000);
       run(dir, ['--git'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
@@ -229,9 +246,9 @@ describe('koa(1)', function () {
     });
 
     it('should have jade templates', function () {
-      assert.notEqual(files.indexOf('views/error.jade'), -1);
-      assert.notEqual(files.indexOf('views/index.jade'), -1);
-      assert.notEqual(files.indexOf('views/layout.jade'), -1);
+      assert.notEqual(files.indexOf('views/error.pug'), -1);
+      assert.notEqual(files.indexOf('views/index.pug'), -1);
+      assert.notEqual(files.indexOf('views/layout.pug'), -1);
     });
   });
 
@@ -256,7 +273,7 @@ describe('koa(1)', function () {
         if (err) return done(err);
         var files = parseCreatedFiles(stdout, dir);
         assert.equal(files.length, 0);
-        assert.ok(/Usage: express/.test(stdout));
+        assert.ok(/Usage: logoran/.test(stdout));
         assert.ok(/--help/.test(stdout));
         assert.ok(/--version/.test(stdout));
         done();
@@ -282,6 +299,7 @@ describe('koa(1)', function () {
     });
 
     it('should create basic app with hbs templates', function (done) {
+      this.timeout(30000);
       run(dir, ['--hbs'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
@@ -300,7 +318,7 @@ describe('koa(1)', function () {
       var file = path.resolve(dir, 'package.json');
       var contents = fs.readFileSync(file, 'utf8');
       var dependencies = JSON.parse(contents).dependencies;
-      assert.ok(typeof dependencies.hbs === 'string');
+      assert.ok(typeof dependencies.handlebars === 'string');
     });
 
     it('should have hbs templates', function () {
@@ -310,33 +328,37 @@ describe('koa(1)', function () {
     });
 
     it('should have installable dependencies', function (done) {
-      this.timeout(30000);
-      npmInstall(dir, done);
+      this.timeout(600000);
+      yarnInstall(dir, done);
     });
 
-    it('should export an express app from app.js', function () {
+    it('should export an logoran app from app.js', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
-      assert.equal(typeof app, 'function');
-      assert.equal(typeof app.handle, 'function');
+      assert.equal(typeof app, 'object');
+      assert.equal(typeof app.callback, 'function');
+      done();
     });
 
     it('should respond to HTTP request', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/')
-      .expect(200, /<title>Express<\/title>/, done);
+      .expect(200, /<h1>Hello Logoran!<\/h1>\n<p>Welcome to Hello Logoran!<\/p>\n/, done);
     });
 
     it('should generate a 404', function (done) {
+      this.timeout(6000);
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
 
-      request(app)
+      request(app.listen())
       .get('/does_not_exist')
-      .expect(404, /<h1>Not Found<\/h1>/, done);
+      .expect(404, /Not Found/, done);
     });
   });
 
@@ -361,7 +383,7 @@ describe('koa(1)', function () {
         if (err) return done(err);
         var files = parseCreatedFiles(stdout, dir);
         assert.equal(files.length, 0);
-        assert.ok(/Usage: express/.test(stdout));
+        assert.ok(/Usage: logoran/.test(stdout));
         assert.ok(/--help/.test(stdout));
         assert.ok(/--version/.test(stdout));
         done();
@@ -391,8 +413,8 @@ function createEnvironment(callback) {
   });
 }
 
-function npmInstall(dir, callback) {
-  exec('npm install', {cwd: dir}, function (err, stderr) {
+function yarnInstall(dir, callback) {
+  exec('yarn install', {cwd: dir}, function (err, stderr) {
     if (err) {
       err.message += stderr;
       callback(err);

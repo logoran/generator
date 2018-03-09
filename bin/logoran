@@ -195,7 +195,7 @@ function createApplication(app_name, path) {
       , version: '0.1.0'
       , private: true
       , "scripts": {
-        "start": "node bin/www",
+        "start": "node ./bin/www",
         "dev": "./node_modules/.bin/nodemon bin/www",
         "prd": "pm2 start bin/www",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -272,7 +272,7 @@ function createApplication(app_name, path) {
     });
 
     if (program.git) {
-      write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates2/js/gitignore', 'utf-8'));
+      write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates-logoran/js/gitignore', 'utf-8'));
     }
 
     complete();
@@ -280,7 +280,7 @@ function createApplication(app_name, path) {
 }
 
 function copy_template(from, to) {
-  from = path.join(__dirname, '..', 'templates2', from);
+  from = path.join(__dirname, '..', 'templates-logoran', from);
   write(to, fs.readFileSync(from, 'utf-8'));
 }
 
@@ -338,7 +338,7 @@ function launchedFromCmd() {
  */
 
 function loadTemplate(name) {
-  return fs.readFileSync(path.join(__dirname, '..', 'templates2', name), 'utf-8');
+  return fs.readFileSync(path.join(__dirname, '..', 'templates-logoran', name), 'utf-8');
 }
 
 /**

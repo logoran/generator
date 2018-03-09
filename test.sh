@@ -1,6 +1,6 @@
 #! /bin/bash
 
-npm link
-rm -rf ../koa-generator-demo
-mkdir ../koa-generator-demo
-cd ../koa-generator-demo && koa2
+# yarn link
+rm -rf ./logoran-generator-demo
+mkdir ./logoran-generator-demo
+cd ./logoran-generator-demo && ../bin/logoran
