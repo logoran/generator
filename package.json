@@ -1,8 +1,8 @@
 {
-  "name": "koa-generator",
-  "version": "1.1.16",
-  "description": "fullstack koa generator for koa 1.x and 2.x",
-  "main": "bin/koa",
+  "name": "logoran-generator",
+  "version": "1.0.0",
+  "description": "fullstack logoran generator for koa and logoran",
+  "main": "bin/logoran",
   "scripts": {
     "start": "npm publish .",
     "test": "mocha --reporter spec --bail --check-leaks test/",
@@ -11,18 +11,18 @@
   "preferGlobal": true,
   "bin": {
     "koa": "./bin/koa",
-    "koa2": "./bin/koa2"
+    "logoran": "./bin/logoran"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/17koa/koa-generator.git"
+    "url": "git+https://github.com/logoran/generator.git"
   },
-  "author": "i5ting",
+  "author": ["i5ting", "leo"],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/17koa/koa-generator/issues"
+    "url": "https://github.com/logoran/generator/issues"
   },
-  "homepage": "https://github.com/17koa/koa-generator#readme",
+  "homepage": "https://github.com/loogran/generator#readme",
   "dependencies": {
     "commander": "2.7.1",
     "mkdirp": "0.5.1",

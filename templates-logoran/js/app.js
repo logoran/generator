@@ -1,10 +1,10 @@
-const Koa = require('koa')
-const app = new Koa()
+const Logoran = require('logoran')
+const app = new Logoran()
 const views = require('koa-views')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
-const logger = require('koa-logger')
+const logger = require('logoran-logger')
 
 const index = require('./routes/index')
 const users = require('./routes/users')

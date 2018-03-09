@@ -1,4 +1,4 @@
-const router = require('koa-router')()
+const router = require('logoran-router')()
 
 router.prefix('/users')
 

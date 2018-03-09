@@ -90,7 +90,7 @@ function createApplication(app_name, path) {
     console.log('   run the app:');
 
     if (launchedFromCmd()) {
-      console.log('     %s SET DEBUG=koa* & npm start', prompt, app_name);
+      console.log('     %s SET DEBUG=logoran* & npm start', prompt, app_name);
     } else {
       console.log('     %s DEBUG=%s:* npm start', prompt, app_name);
     }
@@ -202,13 +202,13 @@ function createApplication(app_name, path) {
       }
       , "dependencies": {
         "debug": "^2.6.3",
-        "koa": "^2.2.0",
+        "logoran": "^1.0.1",
         "koa-bodyparser": "^3.2.0",
         "koa-convert": "^1.2.0",
         "koa-json": "^2.0.2",
-        "koa-logger": "^2.0.1",
+        "logoran-logger": "^1.0.0",
         "koa-onerror": "^1.2.1",
-        "koa-router": "^7.1.1",
+        "logoran-router": "^1.0.2",
         "koa-static": "^3.0.0",
         "koa-views": "^5.2.1"
       }

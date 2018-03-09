@@ -1,34 +1,34 @@
-# koa-generator
+# logoran-generator
 
-http://koajs.com/
+http://logoran.com/
 
-<img src='https://dl.dropboxusercontent.com/u/6396913/koa/logo.png' width='300'/>
+<img src='https://dl.dropboxusercontent.com/u/6396913/logoran/logo.png' width='300'/>
 
-[Koa](https://www.npmjs.com/package/koa) application generator.
+[Logoran](https://www.npmjs.com/package/logoran) application generator.
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
 
 ## Features
 
-- Express-style
-- Support koa 1.x（supported）
-- Support koa 2.x（koa middleware supported,need Node.js 7.6+ ,babel optional）
+- Support Koa（supported）
+- Support Logoran（koa or logoran middleware supported,need Node.js 7.6+ ,babel optional）
 
 ## Installation
 
 ```sh
-$ npm install -g koa-generator
+$ npm install -g logoran-generator
 ```
 
 with 2 commands
 
-- koa (Support koa 1.x)
-- koa2 (Support koa 2.x)
+- koa (Support koa)
+- logoran (Support logoran)
 
-## Quick Start 1.x
+## Quick Start koa
 
-The quickest way to get started with koa is to utilize the executable `koa(1)` to generate an application as shown below:
+
+The quickest way to get started with koa is to utilize the executable `koa` to generate an application as shown below:
 
 Create the app:
 
@@ -48,15 +48,14 @@ Rock and Roll
 $ npm start
 ```
 
-## Quick Start 2.x
+## Quick Start logoran
 
-
-The quickest way to get started with koa is to utilize the executable `koa2(1)` to generate an application as shown below:
+The quickest way to get started with logoran is to utilize the executable `logoran` to generate an application as shown below:
 
 Create the app:
 
 ```bash
-$ koa2 /tmp/foo && cd /tmp/foo
+$ logoran /tmp/foo && cd /tmp/foo
 ```
 
 Install dependencies:
@@ -71,7 +70,7 @@ Rock and Roll
 $ npm start
 ```
 
-more detail see [koa2-demo](https://github.com/17koa/koa2-demo)
+more detail see [logoran-demo](https://github.com/logoran/demo)
 
 ## Command Line Options
 
@@ -91,15 +90,13 @@ This generator can also be further configured with the following command line fl
 
 ## Git Branch Details
 
-- master = koa generator
-- tpl = koa 1.x template
-- tpl_2.x = koa 2.x template
+- master = logoran generator
 
 ## License
 
 [MIT](LICENSE)
 
-[npm-image]: https://img.shields.io/npm/v/koa-generator.svg
-[npm-url]: https://npmjs.org/package/koa-generator
-[downloads-image]: https://img.shields.io/npm/dm/koa-generator.svg
-[downloads-url]: https://npmjs.org/package/koa-generator
+[npm-image]: https://img.shields.io/npm/v/logoran-generator.svg
+[npm-url]: https://npmjs.org/package/logoran-generator
+[downloads-image]: https://img.shields.io/npm/dm/logoran-generator.svg
+[downloads-url]: https://npmjs.org/package/logoran-generator

@@ -19,7 +19,7 @@ describe('logoran', function () {
   });
 
   mocha.after(function (done) {
-    this.timeout(30000);
+    this.timeout(300000);
     cleanup(done);
   });
 
@@ -83,15 +83,15 @@ describe('logoran', function () {
         + '  },\n'
         + '  "dependencies": {\n'
         + '    "debug": "^2.6.3",\n'
-        + '    "koa": "^2.2.0",\n'
         + '    "koa-bodyparser": "^3.2.0",\n'
         + '    "koa-convert": "^1.2.0",\n'
         + '    "koa-json": "^2.0.2",\n'
-        + '    "koa-logger": "^2.0.1",\n'
         + '    "koa-onerror": "^1.2.1",\n'
-        + '    "koa-router": "^7.1.1",\n'
         + '    "koa-static": "^3.0.0",\n'
         + '    "koa-views": "^5.2.1",\n'
+        + '    "logoran": "^1.0.1",\n'
+        + '    "logoran-logger": "^1.0.0",\n'
+        + '    "logoran-router": "^1.0.2",\n'
         + '    "pug": "^2.0.0-rc.1"\n'
         + '  },\n'
         + '  "devDependencies": {\n'
