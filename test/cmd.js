@@ -12,6 +12,15 @@ var spawn = require('child_process').spawn;
 var binPath = path.resolve(__dirname, '../bin/logoran');
 var tempDir = path.resolve(__dirname, '../temp');
 
+function wrap_app(dir) {
+  var file = path.resolve(dir, 'app.js');
+  var cwd = process.cwd();
+  process.chdir(dir);
+  var app = require(file);
+  process.chdir(cwd);
+  return app;
+}
+
 describe('logoran', function () {
   mocha.before(function (done) {
     this.timeout(30000);
@@ -47,7 +56,7 @@ describe('logoran', function () {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
         output = stdout;
-        assert.equal(files.length, 17);
+        assert.equal(files.length, 20, 'should have 20 files');
         done();
       });
     });
@@ -57,7 +66,6 @@ describe('logoran', function () {
     });
 
     it('should have basic files', function () {
-      assert.notEqual(files.indexOf('bin/www'), -1);
       assert.notEqual(files.indexOf('app.js'), -1);
       assert.notEqual(files.indexOf('package.json'), -1);
     });
@@ -73,29 +81,33 @@ describe('logoran', function () {
       var contents = fs.readFileSync(file, 'utf8');
       assert.equal(contents, '{\n'
         + '  "name": ' + JSON.stringify(path.basename(dir)) + ',\n'
-        + '  "version": "0.1.0",\n'
+        + '  "version": "1.0.0",\n'
         + '  "private": true,\n'
         + '  "scripts": {\n'
-        + '    "start": "node ./bin/www",\n'
-        + '    "dev": "./node_modules/.bin/nodemon bin/www",\n'
-        + '    "prd": "pm2 start bin/www",\n'
-        + '    "test": "echo \\"Error: no test specified\\" && exit 1"\n'
+        + '    "start": "node .",\n'
+        + '    "dev": "NODE_ENV=development nodemon .",\n'
+        + '    "debug": "node --inspect-brk .",\n'
+        + '    "test": "NODE_ENV=test jest --forceExit --coverage",\n'
+        + '    "prd": "NODE_ENV=production pm2 start ."\n'
         + '  },\n'
+        + '  "main": "app.js",\n'
         + '  "dependencies": {\n'
+        + '    "config": "^1.30.0",\n'
         + '    "debug": "^2.6.3",\n'
-        + '    "koa-bodyparser": "^3.2.0",\n'
-        + '    "koa-convert": "^1.2.0",\n'
-        + '    "koa-json": "^2.0.2",\n'
-        + '    "koa-onerror": "^1.2.1",\n'
-        + '    "koa-static": "^3.0.0",\n'
+        + '    "dotenv": "^5.0.1",\n'
+        + '    "koa-body": "^2.5.0",\n'
+        + '    "koa-static": "^4.0.2",\n'
         + '    "koa-views": "^5.2.1",\n'
         + '    "logoran": "^1.0.1",\n'
-        + '    "logoran-logger": "^1.0.0",\n'
+        + '    "logoran-logger": "^1.0.1",\n'
         + '    "logoran-router": "^1.0.2",\n'
         + '    "pug": "^2.0.0-rc.1"\n'
         + '  },\n'
         + '  "devDependencies": {\n'
-        + '    "nodemon": "^1.8.1"\n'
+        + '    "jest": "^22.4.3",\n'
+        + '    "nodemon": "^1.9.1",\n'
+        + '    "pm2": "^2.10.2",\n'
+        + '    "supertest": "^1.2.0"\n'
         + '  }\n'
         + '}');
     });
@@ -107,8 +119,8 @@ describe('logoran', function () {
 
     it('should export an logoran app from app.js', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
+
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
       done();
@@ -116,8 +128,7 @@ describe('logoran', function () {
 
     it('should respond to HTTP request', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/')
@@ -126,8 +137,7 @@ describe('logoran', function () {
 
     it('should generate a 404', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/does_not_exist')
@@ -157,13 +167,12 @@ describe('logoran', function () {
       run(dir, ['--ejs'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
-        assert.equal(files.length, 16, 'should have 16 files');
+        assert.equal(files.length, 19, 'should have 19 files');
         done();
       });
     });
 
     it('should have basic files', function () {
-      assert.notEqual(files.indexOf('bin/www'), -1, 'should have bin/www file');
       assert.notEqual(files.indexOf('app.js'), -1, 'should have app.js file');
       assert.notEqual(files.indexOf('package.json'), -1, 'should have package.json file');
     });
@@ -180,8 +189,8 @@ describe('logoran', function () {
 
     it('should export an logoran app from app.js', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
+
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
       done();
@@ -189,8 +198,7 @@ describe('logoran', function () {
 
     it('should respond to HTTP request', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/')
@@ -199,8 +207,7 @@ describe('logoran', function () {
 
     it('should generate a 404', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/does_not_exist')
@@ -230,13 +237,12 @@ describe('logoran', function () {
       run(dir, ['--git'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
-        assert.equal(files.length, 18, 'should have 18 files');
+        assert.equal(files.length, 21, 'should have 21 files');
         done();
       });
     });
 
     it('should have basic files', function () {
-      assert.notEqual(files.indexOf('bin/www'), -1, 'should have bin/www file');
       assert.notEqual(files.indexOf('app.js'), -1, 'should have app.js file');
       assert.notEqual(files.indexOf('package.json'), -1, 'should have package.json file');
     });
@@ -303,13 +309,12 @@ describe('logoran', function () {
       run(dir, ['--hbs'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
-        assert.equal(files.length, 17);
+        assert.equal(files.length, 20, 'should have 20 files');
         done();
       });
     });
 
     it('should have basic files', function () {
-      assert.notEqual(files.indexOf('bin/www'), -1);
       assert.notEqual(files.indexOf('app.js'), -1);
       assert.notEqual(files.indexOf('package.json'), -1);
     });
@@ -334,8 +339,8 @@ describe('logoran', function () {
 
     it('should export an logoran app from app.js', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
+
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
       done();
@@ -343,8 +348,7 @@ describe('logoran', function () {
 
     it('should respond to HTTP request', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/')
@@ -353,8 +357,7 @@ describe('logoran', function () {
 
     it('should generate a 404', function (done) {
       this.timeout(6000);
-      var file = path.resolve(dir, 'app.js');
-      var app = require(file);
+      var app = wrap_app(dir);
 
       request(app.listen())
       .get('/does_not_exist')

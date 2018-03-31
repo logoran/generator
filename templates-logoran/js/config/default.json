@@ -1,0 +1,10 @@
+{
+  "main": {
+    "jwt": {
+      "key": "signature-key"
+    },
+    "server": {
+      "port": 3000
+    }
+  }
+}

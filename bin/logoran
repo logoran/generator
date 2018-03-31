@@ -76,7 +76,7 @@ function confirm(msg, callback) {
  */
 
 function createApplication(app_name, path) {
-  var wait = 5;
+  var wait = 6;
 
   console.log();
   function complete() {
@@ -100,9 +100,12 @@ function createApplication(app_name, path) {
 
   // JavaScript
   var app = loadTemplate('js/app.js');
-  var www = loadTemplate('js/www');
   var index = loadTemplate('js/routes/index.js');
   var users = loadTemplate('js/routes/users.js');
+  var config_default = loadTemplate('js/config/default.json');
+  var config_development = loadTemplate('js/config/development.json');
+  var config_production = loadTemplate('js/config/production.json');
+  var config_test = loadTemplate('js/config/test.json');
 
   // CSS
   var css = loadTemplate('css/style.css');
@@ -138,6 +141,14 @@ function createApplication(app_name, path) {
     mkdir(path + '/routes', function(){
       write(path + '/routes/index.js', index);
       write(path + '/routes/users.js', users);
+      complete();
+    });
+
+    mkdir(path + '/config', function(){
+      write(path + '/config/default.json', config_default);
+      write(path + '/config/development.json', config_development);
+      write(path + '/config/production.json', config_production);
+      write(path + '/config/test.json', config_test);
       complete();
     });
 
@@ -192,28 +203,32 @@ function createApplication(app_name, path) {
     // package.json
     var pkg = {
         name: app_name
-      , version: '0.1.0'
+      , version: '1.0.0'
       , private: true
       , "scripts": {
-        "start": "node ./bin/www",
-        "dev": "./node_modules/.bin/nodemon bin/www",
-        "prd": "pm2 start bin/www",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node .",
+        "dev": "NODE_ENV=development nodemon .",
+        "debug": "node --inspect-brk .",
+        "test": "NODE_ENV=test jest --forceExit --coverage",
+        "prd": "NODE_ENV=production pm2 start ."
       }
+      , main: "app.js"
       , "dependencies": {
+        "config": "^1.30.0",
         "debug": "^2.6.3",
+        "dotenv": "^5.0.1",
+        "koa-body": "^2.5.0",
+        "koa-static": "^4.0.2",
+        "koa-views": "^5.2.1",
         "logoran": "^1.0.1",
-        "koa-bodyparser": "^3.2.0",
-        "koa-convert": "^1.2.0",
-        "koa-json": "^2.0.2",
-        "logoran-logger": "^1.0.0",
-        "koa-onerror": "^1.2.1",
-        "logoran-router": "^1.0.2",
-        "koa-static": "^3.0.0",
-        "koa-views": "^5.2.1"
+        "logoran-logger": "^1.0.1",
+        "logoran-router": "^1.0.2"
       }
       , "devDependencies": {
-        "nodemon": "^1.8.1"
+        "jest": "^22.4.3",
+        "nodemon": "^1.9.1",
+        "pm2": "^2.10.2",
+        "supertest": "^1.2.0"
       }
     }
 
@@ -264,12 +279,13 @@ function createApplication(app_name, path) {
     // write files
     write(path + '/package.json', JSON.stringify(pkg, null, 2));
     write(path + '/app.js', app);
-    mkdir(path + '/bin', function(){
-      www = www.replace('{name}', app_name);
-      write(path + '/bin/www', www, 0755);
+    // mkdir(path + '/bin', function(){
+    //   www = www.replace('{name}', app_name);
+    //   write(path + '/bin/www', www, 0755);
 
-      complete();
-    });
+    //   complete();
+    // });
+    complete();
 
     if (program.git) {
       write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates-logoran/js/gitignore', 'utf-8'));
